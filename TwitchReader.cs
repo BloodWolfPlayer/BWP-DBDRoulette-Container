@@ -18,7 +18,7 @@ namespace BWPlayerTwitchMagic
         private string _oauthToken;
         private string _channel;
         private bool _connected = false;
-        private string GambleCommand;
+        private string GambleCommand = null;
 
         protected string CleanedMessage { get; set; }
         protected string CleanedUsername { get; set; }
@@ -34,7 +34,15 @@ namespace BWPlayerTwitchMagic
             _channel = channel;
             _webSocket = new ClientWebSocket();
 
-            GambleCommand = Command ?? "!Gamble";
+            if (string.IsNullOrWhiteSpace(Command))
+            {
+                Console.WriteLine("Cant be an empty command! Do not include Spaces in the command.");
+                GambleCommand = "!Gamble";
+            }
+            else
+            {
+                GambleCommand = Command;
+            }
         }
 
         // Connect to Twitch IRC and read selected channel messages.

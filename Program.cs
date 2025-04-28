@@ -66,8 +66,6 @@ namespace BWPlayerTwitchMagic
             {
                 oauthToken = "oauth:" + oauthToken;
             }
-            var twitchReader = new TwitchReader(username, oauthToken, channel);
-            twitchReader.ConnectAndReadChat();
         }
 
         private static void StartElectronApp(int survivors, bool killer, int screenSelection, int cornerLoc, string Survivor1 = null, string Survivor2 = null, string Survivor3 = null, string Survivor4 = null, string KillerRoll = null)
