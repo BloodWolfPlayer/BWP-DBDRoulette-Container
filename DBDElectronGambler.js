@@ -2,10 +2,39 @@ const { app, BrowserWindow, screen } = require('electron');
 const WebSocket = require('ws'); // Import WebSocket
 
 let windows = []; // Array to store multiple BrowserWindow instances
-let Survivors = 1; // Number of survivors to reroll (min 0, max 4)
-let Killer = false; // Whether to reroll killer perks
-let ScreenSelection = 1; // Screen selection (0 for primary, 1 for secondary, etc.)
-let CornerLoc = 0; // Corner location (0 for top-left, 1 for top-right, 2 for bottom-left, 3 for bottom-right)
+
+
+
+const args = process.argv.slice(2); // Skip the first two arguments (node and script path)
+let Survivors = parseInt(args[0]) || 1; // Default to 1 if not provided
+let Killer = args[1] === 'true'; // Convert string to boolean
+let ScreenSelection = parseInt(args[2]) || 0; // Default to 0 if not provided
+let CornerLoc = parseInt(args[3]) || 0; // Default to 0 if not provided
+const SurvivorURLs = [
+  args[4] || "https://dpsm.3stadt.com/survivor?streammode=1", // Default to all perks
+  args[5] || "https://dpsm.3stadt.com/survivor?streammode=1", 
+  args[6] || "https://dpsm.3stadt.com/survivor?streammode=1", 
+  args[7] || "https://dpsm.3stadt.com/survivor?streammode=1", 
+];
+let KillerURL = args[8] || "https://dpsm.3stadt.com/killer?streammode=1"; // Default to all perks
+
+// add "+"&streammode=1" to the end of the URLs, if not given by user in settings.
+for (let i = 0; i < SurvivorURLs.length; i++) {
+  if (!SurvivorURLs[i].includes("&streammode=1") && !SurvivorURLs[i].includes("?streammode=1")) {
+    if (SurvivorURLs[i].includes("?")) {
+    SurvivorURLs[i] += "&streammode=1";
+  }
+}
+}
+
+if (!KillerURL.includes("&streammode=1") && !KillerURL.includes("?streammode=1")) {
+  KillerURL += "&streammode=1";
+}
+
+if (Survivors == 0 && !Killer){
+  console.error("Invalid configuration: At least one window (Survivor or Killer) must be created.");
+  process.exit(2);
+}
 
 // Create WebSocket server
 const wss = new WebSocket.Server({ port: 8080 });
@@ -57,18 +86,6 @@ function createWindows() {
       break;
   }
 
-  // Generate URLs for Survivor and Killer
-  const survivorURLs = [
-    "https://dpsm.3stadt.com/survivor?sids=0,1,3,72,83,4,65,5,107,68,6,7,8,9,81,11,66,128,95,99,12,13,14,133,16,17,80,18,20,21,98,143,144,141,69,92,114,22,23,108,131,104,70,24,25,26,27,28,29,130,64,145,30,31,32,33,35,113,37,38,39,115,111,40,41,123,67,42,96,148,43,44,77,140,47,48,50,135,51,52,53,147,54,55,56,59,60,134&streammode=1",
-    "https://dpsm.3stadt.com/survivor?sids=4,65,5,107,68&streammode=1",
-    "https://dpsm.3stadt.com/survivor?sids=6,7,8,9,81&streammode=1",
-    "https://dpsm.3stadt.com/survivor?sids=11,66,128,95,99&streammode=1",
-  ];
-  const killerURL = "https://dpsm.3stadt.com/killer?streammode=1";
-
-
-
-
   // Create windows for Survivors
   for (let i = 0; i < Survivors; i++) {
     const windowOptions = {
@@ -85,7 +102,7 @@ function createWindows() {
     };
 
     const win = new BrowserWindow(windowOptions);
-    win.loadURL(survivorURLs[i]); // Load the corresponding Survivor URL
+    win.loadURL(SurvivorURLs[i]); // Load the corresponding Survivor URL
     setupWindow(win);
     windows.push(win);
   }
@@ -106,7 +123,7 @@ function createWindows() {
     };
 
     const win = new BrowserWindow(windowOptions);
-    win.loadURL(killerURL); // Load the Killer URL
+    win.loadURL(KillerURL); // Load the Killer URL
     setupWindow(win);
     windows.push(win);
   }

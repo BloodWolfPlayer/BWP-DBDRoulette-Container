@@ -18,30 +18,23 @@ namespace BWPlayerTwitchMagic
         private string _oauthToken;
         private string _channel;
         private bool _connected = false;
-        private bool _gamblingEnabled = true;
+        private string GambleCommand;
 
         protected string CleanedMessage { get; set; }
         protected string CleanedUsername { get; set; }
         protected string CleanedChannelPoint { get; set; }
-
-        private DbDGambler _dbDGambler;
         private ClientWebSocket _webSocket;
         private DateTime _lastGambleCommandTime = DateTime.MinValue; // Tracks the last gamble command time
 
 
-        public TwitchReader(string username, string oauthToken, string channel)
+        public TwitchReader(string username, string oauthToken, string channel, string Command)
         {
             _username = username;
             _oauthToken = oauthToken;
             _channel = channel;
-
-            // Firefox / Chrome based gambling. !!!NO transparent background. !!!
-            /*
-            _dbDGambler = new DbDGambler();
-            _dbDGambler.OpenPerkSelector();
-            */
-
             _webSocket = new ClientWebSocket();
+
+            GambleCommand = Command ?? "!Gamble";
         }
 
         // Connect to Twitch IRC and read selected channel messages.
@@ -114,7 +107,7 @@ namespace BWPlayerTwitchMagic
                                         Console.WriteLine($"\u001b[32m{CleanedMessage}\u001b[0m \u001b[33m|| Sent by ||\u001b[0m \u001b[36m{CleanedUsername}\u001b[0m");
                             
                                         // Handle !Gamble command
-                                        if (CleanedMessage.Contains("!Gamble", StringComparison.OrdinalIgnoreCase) || 
+                                        if (CleanedMessage.Contains(GambleCommand, StringComparison.OrdinalIgnoreCase) || 
                                             CleanedMessage.Contains("!gambling", StringComparison.OrdinalIgnoreCase))
                                         {
                                             if ((DateTime.Now - _lastGambleCommandTime).TotalSeconds >= 5)
@@ -160,13 +153,12 @@ namespace BWPlayerTwitchMagic
             }
             finally
             {
-                _dbDGambler.Close();
-                Console.WriteLine("DbDGambler closed.");
 
                 if (_webSocket.State == WebSocketState.Open)
                 {
                     _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None).Wait();
                 }
+                Console.WriteLine("DbDGambler closed, goodbye!");
             }
         }
         private async void SendRerollCommandToElectron()

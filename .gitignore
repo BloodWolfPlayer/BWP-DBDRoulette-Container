@@ -37,3 +37,4 @@ Thumbs.db
 # Ignore local-only folder
 ignoreables/
 Ignorables/
+settings.txt
