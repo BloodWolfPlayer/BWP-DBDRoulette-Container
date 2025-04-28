@@ -1,4 +1,4 @@
-# Dead By Daylight Twitch Reader Container
+# Dead By Daylight Perk Roulette Container with Twitch Intergration
 
 ## Overview
 This Program can be used to run instances of the "DbD perk slot machine" from 3stadt **(https://github.com/3stadt/dbd_perk_slot_machine/)** semi-locally on your machine.
