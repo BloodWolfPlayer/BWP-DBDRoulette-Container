@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>BWPlayerTwitchMagic</RootNamespace>
+    <AssemblyName>BWPlayerTwitchMagic</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.31.0" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.36.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+  <StartupObject>BWPlayerTwitchMagic.Program</StartupObject>
+</PropertyGroup>
+
+</Project>
